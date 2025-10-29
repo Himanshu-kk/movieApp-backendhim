@@ -18,14 +18,29 @@ const allowedOrigins = [
   "https://endearing-cajeta-1cbabb.netlify.app/admin/login", // ✅ your real Netlify frontend
 ];
 
+
+// ✅ CORS setup (works for all Netlify subdomains + local + Render)
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin || allowedOrigins.includes(origin)) {
-        console.log(`✅ Allowed CORS for origin: ${origin}`);
+      // Allow requests without origin (like Postman / server-to-server)
+      if (!origin) return callback(null, true);
+
+      const allowedOrigins = [
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "https://movieapp.vercel.app",
+        "https://movie-admin.netlify.app",
+      ];
+
+      // ✅ Allow all Netlify subdomains dynamically
+      const netlifyPattern = /^https:\/\/([a-z0-9-]+)\.netlify\.app$/i;
+
+      if (allowedOrigins.includes(origin) || netlifyPattern.test(origin)) {
+        console.log("✅ Allowed CORS for origin:", origin);
         callback(null, true);
       } else {
-        console.warn(`❌ Blocked CORS for origin: ${origin}`);
+        console.warn("❌ Blocked CORS for origin:", origin);
         callback(new Error("Not allowed by CORS"));
       }
     },
