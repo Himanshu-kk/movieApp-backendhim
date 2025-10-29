@@ -15,7 +15,7 @@ const allowedOrigins = [
   "http://localhost:5174", // public frontend (local)
   "https://movie-admin.netlify.app", // example
   "https://movieapp.vercel.app",     // example
-  "https://elaborate-alpaca-b03ef9.netlify.app", // ✅ your real Netlify frontend
+  "https://endearing-cajeta-1cbabb.netlify.app/admin/login", // ✅ your real Netlify frontend
 ];
 
 app.use(
