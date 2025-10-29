@@ -11,16 +11,18 @@ const PORT = process.env.PORT || 5000;
 
 // ✅ Allow both localhost & production URLs
 const allowedOrigins = [
-  "http://localhost:5173", // admin frontend
-  "http://localhost:5174", // public frontend
-  "https://movie-admin.netlify.app", // (update when deployed)
-  "https://movieapp.vercel.app",     // (update when deployed)
+  "http://localhost:5173", // admin frontend (local)
+  "http://localhost:5174", // public frontend (local)
+  "https://movie-admin.netlify.app", // example
+  "https://movieapp.vercel.app",     // example
+  "https://elaborate-alpaca-b03ef9.netlify.app", // ✅ your real Netlify frontend
 ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin || allowedOrigins.includes(origin)) {
+        console.log(`✅ Allowed CORS for origin: ${origin}`);
         callback(null, true);
       } else {
         console.warn(`❌ Blocked CORS for origin: ${origin}`);
