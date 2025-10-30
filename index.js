@@ -15,9 +15,9 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://movie-admin.netlify.app",
       "https://movieapp.vercel.app",
-      "https://aquamarine-kleicha-91beb2.netlify.app/",
+      "https://movie-admin-frontend.vercel.app"
+      
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
