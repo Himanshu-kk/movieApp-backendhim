@@ -3,6 +3,7 @@ import sendEmail from "../config/sendEmail.js";
 import Admin from "../models/admin.model.js";
 
 
+
 // generate random 6 digit OTP
 const generateOTP = () => Math.floor(100000 + Math.random() * 900000).toString();
 
