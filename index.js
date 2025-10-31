@@ -15,7 +15,7 @@ app.use(
     origin: [
       "http://localhost:5173",
       "http://localhost:5174",
-      "https://movie-d5l3.vercel.app/",
+      "https://movie-d5l3.vercel.app",
       "https://movie-admin-frontend.vercel.app",
       "https://movie-admin-frontend-mbehgah76-vikashs-projects-b626ec94.vercel.app",
       
