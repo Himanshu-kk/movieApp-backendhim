@@ -1,4 +1,3 @@
-// index.js
 import express from "express";
 import cors from "cors";
 import dbConnect from "./config/dbConnect.js";
@@ -7,14 +6,15 @@ import adminRouter from "./routes/admin.routes.js";
 
 const app = express();
 
-// CORS - Allow ALL your frontends
+// CORS - Allow ALL your frontends (Admin + Public + Local)
 app.use(
   cors({
     origin: [
-      "https://movie-admin-frontend.vercel.app",
-      "https://movie-six-azure.vercel.com",
-      "http://localhost:5173",
-      "http://localhost:5174",
+      "https://movie-admin-frontend.vercel.app",  // Admin Panel
+      "https://movie-six-azure.vercel.app",       // Public Site
+      "https://movie-d5l3.vercel.app",            // अगर ये भी है
+      "http://localhost:5173",                    // Local Frontend
+      "http://localhost:3000"                     // Local React
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"],
@@ -22,10 +22,10 @@ app.use(
   })
 );
 
-// Handle preflight
+// Handle preflight OPTIONS globally
 app.options("*", cors());
 
-// Body parser - 10MB limit
+// Body parser with 10MB limit
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
@@ -35,8 +35,8 @@ app.use(async (req, res, next) => {
     await dbConnect();
     next();
   } catch (error) {
-    console.error("DB Error:", error);
-    return res.status(500).json({ success: false, message: "DB Connection Failed" });
+    console.error("DB Connection Failed:", error);
+    return res.status(500).json({ success: false, message: "Database connection failed" });
   }
 });
 
@@ -44,17 +44,17 @@ app.use(async (req, res, next) => {
 app.use("/api/movies", movieRouter);
 app.use("/api/admin", adminRouter);
 
-// Home
+// Home route
 app.get("/", (req, res) => {
-  res.json({ success: true, message: "Backend Live!" });
+  res.status(200).json({ success: true, message: "🎬 Movie Backend API Running Successfully!" });
 });
 
-// 404
+// 404 handler
 app.use("*", (req, res) => {
   res.status(404).json({ success: false, message: "Route not found" });
 });
 
-// EXPORT FOR VERCEL
+// Export for Vercel (NO app.listen!)
 export default app;
 
 
