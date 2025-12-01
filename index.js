@@ -16,6 +16,8 @@ app.use(
       "https://movie-admin-frontend.vercel.app",
       "https://movie-six-azure.vercel.app",
       "https://movie-d5l3.vercel.app",
+      "https://movie-admin-frontendhim.vercel.app",
+      "https://movie-black-delta.vercel.app",
       "http://localhost:5173",
       "https://www.moviesfear.xyz",
       "http://localhost:3000"
