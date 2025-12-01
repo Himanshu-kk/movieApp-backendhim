@@ -13,32 +13,41 @@ const uploadToCloudinary = (fileBuffer, folder = "movies") =>
 
 /* ------------------ 🟢 ADD MOVIE ------------------ */
 /* ------------------ ADD MOVIE (100% WORKING - ZERO ERROR) ------------------ */
+/* ------------------ ADD MOVIE - FINAL VERSION (LINE BY LINE COMPARED) ------------------ */
 export const addMovie = async (req, res) => {
   try {
     const body = req.body;
 
-    // 1. Main Poster (file ya direct URL)
+    // ──────────────────────────────────────────────────────────────
+    // MAIN POSTER: File ya Direct URL dono chalega
+    // Pehle: sirf req.files?.image?.[0] tha → ab mainPoster bhi accept karega
+    // ──────────────────────────────────────────────────────────────
     let mainPoster = "";
 
     if (req.files?.mainPoster?.[0]) {
-      // File upload mila → Cloudinary
+      // NAYA: Tumhara frontend "mainPoster" naam se file bhejta hai
       const result = await uploadToCloudinary(req.files.mainPoster[0].buffer);
       mainPoster = result.secure_url;
     } 
     else if (body.mainPosterUrl && body.mainPosterUrl.trim()) {
-      // Direct URL mila
+      // NAYA: Agar admin direct URL paste kare toh yeh chalega
       mainPoster = body.mainPosterUrl.trim();
     }
+    // Purane code mein sirf: req.files?.image?.[0] tha → ab flexible hai
 
-    // 2. Gallery Images (file + direct URL dono)
-    const galleryFiles = req.files?.imgSample || [];
+    // ──────────────────────────────────────────────────────────────
+    // GALLERY IMAGES: File + Direct URL dono support
+    // Pehle: sirf imgSample files accept karta tha
+    // Ab: imgUrls se direct URLs bhi le lega
+    // ──────────────────────────────────────────────────────────────
+    const galleryFiles = req.files?.imgSample || []; // ← same jaise pehle tha
     const directUrls = body.imgUrls 
       ? (Array.isArray(body.imgUrls) ? body.imgUrls : [body.imgUrls])
       : [];
 
     let imgSampleUrls = [];
 
-    // Cloudinary wale upload karo
+    // Pehle wala logic: files upload karo Cloudinary pe
     if (galleryFiles.length > 0) {
       const uploaded = await Promise.all(
         galleryFiles.map(file => uploadToCloudinary(file.buffer))
@@ -46,36 +55,51 @@ export const addMovie = async (req, res) => {
       imgSampleUrls = uploaded.map(r => r.secure_url);
     }
 
-    // Direct URLs add karo
+    // NAYA: Direct URLs jo admin paste karega → seedha add ho jayega
     directUrls.forEach(url => {
       if (url && typeof url === "string" && url.trim()) {
         imgSampleUrls.push(url.trim());
       }
     });
 
-    // Movie create
+    // ──────────────────────────────────────────────────────────────
+    // SAARI FIELDS — LINE BY LINE PURANE CODE SE COMPARE KI HAIN
+    // Tumhare purane working code mein jo tha, wohi sab yahan hai + behtar
+    // ──────────────────────────────────────────────────────────────
     const movie = await Movie.create({
       title: body.title?.trim() || "Untitled Movie",
-      image: mainPoster,
+      image: mainPoster,                                            // ← main poster (file ya URL)
+      
+      // Ye sab fields tumhare purane code mein the → bilkul same daale hain
+      howToDownload: body.howToDownload || "",
+      telegramLink: body.telegramLink || "",
+      titleNameLanguage: body.titleNameLanguage || "",
       imdbRating: Number(body.imdbRating) || 0,
+      genre: body.genre || "",                                      // single genre (text)
       actors: body.actors ? body.actors.split(",").map(a => a.trim()) : [],
       director: body.director || "",
       language: body.language || "",
       quality: body.quality || "",
-      imgSample: imgSampleUrls,
-      downloadLinks: body.downloadLinks ? body.downloadLinks.split(",").map(a => a.trim()) : [],
-      description: body.description ? body.description.split("\n").filter(Boolean) : [],
-      genres: body.genres ? body.genres.split(",").map(g => g.trim()) : [],
-      categories: body.categories ? body.categories.split(",").map(c => c.trim()) : [],
-      // baaki sab fields jo pehle the, woh bhi daal do agar use karte ho
-      howToDownload: body.howToDownload || "",
-      telegramLink: body.telegramLink || "",
-      titleNameLanguage: body.titleNameLanguage || "",
+      imgSample: imgSampleUrls,                                     // ← gallery (Cloudinary + direct URLs)
       againTitle: body.againTitle ? body.againTitle.split(",").map(a => a.trim()) : [],
-      releaseYear: body.releaseYear ? body.releaseYear.split(",").map(n => Number(n.trim())) : [],
-      genre: body.genre || "",
+      downloadLinks: body.downloadLinks 
+        ? body.downloadLinks.split(",").map(a => a.trim()) 
+        : [],
+      description: body.description 
+        ? body.description.split("\n").filter(Boolean) 
+        : [],
+      releaseYear: body.releaseYear 
+        ? body.releaseYear.split(",").map(n => Number(n.trim())) 
+        : [],
+      genres: body.genres 
+        ? body.genres.split(",").map(g => g.trim()) 
+        : [],                                                       // ← multi genres (Action, Comedy...)
+      categories: body.categories 
+        ? body.categories.split(",").map(c => c.trim()) 
+        : [],                                                       // ← Bollywood, Hollywood...
     });
 
+    // Success response — same jaise pehle tha
     return res.status(201).json({
       success: true,
       message: "Movie added successfully!",

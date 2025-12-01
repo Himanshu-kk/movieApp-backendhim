@@ -17,6 +17,7 @@ app.use(
       "https://movie-six-azure.vercel.app",
       "https://movie-d5l3.vercel.app",
       "http://localhost:5173",
+      "https://www.moviesfear.xyz",
       "http://localhost:3000"
     ],
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
